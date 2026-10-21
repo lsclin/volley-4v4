@@ -1,0 +1,8 @@
+# Copy to .dev.vars only for local Workers preview; keep real values private.
+FOUR_V_FOUR_DEPLOY_TARGET="cloudflare"
+FOUR_V_FOUR_DATABASE_URL="libsql://REPLACE-WITH-DEDICATED-TEST-DATABASE.turso.io"
+FOUR_V_FOUR_AUTH_TOKEN=""
+FOUR_V_FOUR_SESSION_SECRET=""
+FOUR_V_FOUR_SITE_ORIGIN="http://localhost:8787"
+# Local preview only. Never set this exception in the deployed Worker.
+FOUR_V_FOUR_ALLOW_LOCAL_HTTP="1"

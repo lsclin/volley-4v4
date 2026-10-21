@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "volley-4v4",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-19",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "volley-4v4" }],
+  "vars": { "FOUR_V_FOUR_DEPLOY_TARGET": "cloudflare" },
+  // Enable a test URL or add a custom domain only after deployment approval.
+  "workers_dev": false,
+  "preview_urls": false,
+  "limits": { "cpu_ms": 30000 },
+  "observability": { "enabled": false }
+}

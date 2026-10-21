@@ -1,0 +1,201 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../src/generated/four-v-four"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum GroupCode {
+  A
+  B
+}
+
+enum MatchStage {
+  GROUP
+  SEMIFINAL
+  THIRD_PLACE
+  FINAL
+  PLACEMENT
+}
+
+enum MatchStatus {
+  NOT_STARTED
+  LIVE
+  FINISHED
+}
+
+enum MatchFormat {
+  BO1
+  BO3
+}
+
+enum ApprovalType {
+  CROSS
+  FINAL
+}
+
+enum CredentialRole {
+  ADMIN
+  SCORER
+}
+
+// This database contains a single tournament. CHECK constraints live in the migration.
+model Tournament {
+  id                String    @id @default("current")
+  name              String
+  mode              Int
+  location          String    @default("高新区室外排球场")
+  rulesText         String    @default("")
+  groupTarget       Int       @default(25)
+  groupCap          Int       @default(29)
+  crossTarget       Int       @default(15)
+  crossCap          Int       @default(19)
+  revision          Int       @default(0)
+  groupResultsRevision Int   @default(0)
+  resultsRevision   Int       @default(0)
+  schedulePublished Boolean   @default(false)
+  startedAt         DateTime?
+  noticeText        String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  teams             Team[]
+  courts            Court[]
+  matches           Match[]
+  approvals         Approval[]
+  credentials       Credential[]
+  auditLogs         AuditLog[]
+}
+
+model Team {
+  id           String     @id
+  tournamentId String     @default("current")
+  drawCode     String
+  name         String     @default("")
+  group        GroupCode
+  slot         Int
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Restrict)
+  homeMatches  Match[]    @relation("HomeTeam")
+  awayMatches  Match[]    @relation("AwayTeam")
+  wonMatches   Match[]    @relation("WinnerTeam")
+
+  @@unique([tournamentId, drawCode])
+  @@unique([tournamentId, group, slot])
+}
+
+model Court {
+  id           String     @id
+  tournamentId String     @default("current")
+  name         String
+  netHeightCm  Int
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Restrict)
+  matches      Match[]
+  credentials  Credential[]
+}
+
+model Match {
+  id           String      @id
+  tournamentId String      @default("current")
+  code         String
+  stage        MatchStage
+  group        GroupCode?
+  placement    Int?
+  format       MatchFormat
+  targetPoints Int
+  capPoints    Int
+  courtId      String
+  sequence     Int
+  // Immutable template references: team:A1, rank:A:1, winner:M13, loser:M13.
+  homeRef      String
+  awayRef      String
+  homeTeamId   String?
+  awayTeamId   String?
+  status       MatchStatus @default(NOT_STARTED)
+  winnerId     String?
+  version      Int         @default(0)
+  startedAt    DateTime?
+  submittedAt  DateTime?
+  crossApprovalIdAtStart String?
+  tournament   Tournament  @relation(fields: [tournamentId], references: [id], onDelete: Restrict)
+  court        Court       @relation(fields: [courtId], references: [id], onDelete: Restrict)
+  homeTeam     Team?       @relation("HomeTeam", fields: [homeTeamId], references: [id], onDelete: Restrict)
+  awayTeam     Team?       @relation("AwayTeam", fields: [awayTeamId], references: [id], onDelete: Restrict)
+  winner       Team?       @relation("WinnerTeam", fields: [winnerId], references: [id], onDelete: Restrict)
+  sets         SetScore[]
+  actions      ScoreAction[]
+  crossApprovalAtStart Approval? @relation(fields: [crossApprovalIdAtStart], references: [id], onDelete: Restrict)
+
+  @@unique([tournamentId, code])
+  @@unique([courtId, sequence])
+  @@index([stage, status])
+}
+
+model SetScore {
+  id              String  @id @default(cuid())
+  matchId         String
+  setIndex        Int
+  homePoints      Int     @default(0)
+  awayPoints      Int     @default(0)
+  confirmed       Boolean @default(false)
+  excluded        Boolean @default(false)
+  exclusionReason String?
+  match           Match   @relation(fields: [matchId], references: [id], onDelete: Restrict)
+
+  @@unique([matchId, setIndex])
+}
+
+model ScoreAction {
+  id             String   @id @default(cuid())
+  requestId      String   @unique
+  matchId        String
+  actor          String
+  operation      String
+  payload        String
+  before         String
+  after          String
+  expectedVersion Int
+  resultingVersion Int
+  createdAt      DateTime @default(now())
+  match          Match    @relation(fields: [matchId], references: [id], onDelete: Restrict)
+}
+
+model Approval {
+  id             String       @id @default(cuid())
+  tournamentId   String       @default("current")
+  type           ApprovalType
+  sourceRevision Int
+  snapshot       String
+  approvedBy     String
+  approvedAt     DateTime     @default(now())
+  invalidatedAt  DateTime?
+  tournament     Tournament   @relation(fields: [tournamentId], references: [id], onDelete: Restrict)
+  startedMatches Match[]
+
+  @@unique([tournamentId, type, sourceRevision])
+  @@index([type, invalidatedAt])
+}
+
+model Credential {
+  id           String         @id @default(cuid())
+  tournamentId String?        @default("current")
+  role         CredentialRole
+  courtId      String?        @unique
+  codeHash     String
+  version      Int            @default(1)
+  updatedAt    DateTime       @updatedAt
+  tournament   Tournament?    @relation(fields: [tournamentId], references: [id], onDelete: Restrict)
+  court        Court?         @relation(fields: [courtId], references: [id], onDelete: Restrict)
+}
+
+model AuditLog {
+  id           String     @id @default(cuid())
+  tournamentId String     @default("current")
+  actor        String
+  operation    String
+  subject      String
+  before       String?
+  after        String
+  createdAt    DateTime   @default(now())
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Restrict)
+}

@@ -1,0 +1,57 @@
+{
+  "name": "ustc-volleyball-4v4",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev -p 4315",
+    "predev": "npm run db:generate",
+    "build": "npm run db:generate && next build",
+    "start": "next start -p 4315",
+    "cf:build": "node scripts/build-cloudflare.mjs",
+    "cf:preview": "node scripts/preview-cloudflare.mjs",
+    "cf:check": "wrangler deploy --dry-run --outdir .open-next/dry-run",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --incremental false",
+    "db:generate": "prisma generate",
+    "db:migrate": "node --experimental-strip-types scripts/four-v-four-migrate.ts",
+    "db:backup": "node --experimental-strip-types scripts/database-backup.ts backup",
+    "db:restore": "node --experimental-strip-types scripts/database-backup.ts restore",
+    "check:production": "node --experimental-strip-types scripts/check-production.ts",
+    "test:field": "node --experimental-strip-types scripts/test-field-event.mjs",
+    "tournament": "node --experimental-strip-types scripts/four-v-four-admin.ts",
+    "staff:access": "node --experimental-strip-types scripts/staff-access.ts",
+    "test:cloud": "node --experimental-strip-types scripts/check-cloud.ts",
+    "review:seed": "npm run db:generate && node --experimental-strip-types scripts/prepare-review.ts",
+    "test": "npm run db:generate && node scripts/test-four-v-four.mjs"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "@libsql/client": "0.17.3",
+    "@prisma/adapter-libsql": "7.8.0",
+    "@prisma/client": "7.8.0",
+    "dotenv": "17.4.2",
+    "iron-session": "8.0.4",
+    "lucide-react": "1.17.0",
+    "next": "16.4.1",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "swr": "2.4.1",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@opennextjs/cloudflare": "1.20.12",
+    "@tailwindcss/postcss": "4.3.1",
+    "@types/node": "20.19.43",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "eslint": "9.39.1",
+    "eslint-config-next": "16.4.1",
+    "prisma": "7.8.0",
+    "tailwindcss": "4.3.1",
+    "typescript": "5.9.3",
+    "wrangler": "4.151.2"
+  }
+}
