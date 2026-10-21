@@ -25,7 +25,7 @@ volley-4v4/
 ├─ tests/                            正式业务自动化测试与隔离测试夹具
 ├─ docs/
 │  ├─ phase-1.md … phase-5.md         阶段说明与验收记录
-│  ├─ deployment.md                 生产配置、迁移、备份恢复与部署等待项
+│  ├─ deployment.md                 给部署人员的运行配置、数据库及维护交接说明
 │  ├─ cloudflare.md                 Workers + Turso准备及本地预览
 │  └─ reference/
 │     ├─ product-v1/                 V1.0产品设计、HTML原型、记分台参考图
@@ -60,7 +60,7 @@ volley-4v4/
 | 移动端HTML原型 | [UI原型](docs/reference/product-v1/排协4v4_V1.0_移动端UI原型.html) |
 | 记分台BO1/BO3参考 | [参考图](docs/reference/product-v1/排协4v4_记分台_BO1_BO3_精确UI草图.png) |
 | 阶段5联调及环境限制 | [简洁验收说明](docs/phase-5.md) |
-| 生产配置与备份恢复 | [部署说明](docs/deployment.md) |
+| 部署人员交接 | [部署交接说明](docs/deployment.md) |
 | Cloudflare Workers + Turso | [部署准备、构建与本地预览](docs/cloudflare.md) |
 | 修订版比赛策划书 | [Word](artifacts/planning/中国科学技术大学学生排球协会4v4排球比赛策划书_修订版.docx)、[PDF](artifacts/planning/中国科学技术大学学生排球协会4v4排球比赛策划书_修订版.pdf) |
 | 8队完整对阵表和对阵图 | [Excel](artifacts/schedule/4v4排球比赛_8队完整对阵表.xlsx)、[PNG](artifacts/schedule/4v4排球比赛_8队完整对阵图.png)、[SVG](artifacts/schedule/4v4排球比赛_8队完整对阵图.svg) |
